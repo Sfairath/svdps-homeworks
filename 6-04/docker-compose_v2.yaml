@@ -1,0 +1,48 @@
+version: "3.8"
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+networks:
+  logvinenko-vi-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+services:
+  logvinenko-vi-prometheus:
+    image: prom/prometheus:v3.5.1
+    restart: always
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus/
+    networks:
+      - logvinenko-vi-my-netology-hw
+    ports:
+      - "9090:9090"
+
+  logvinenko-vi-pushgateway:
+    image: prom/pushgateway:v1.11.2
+    restart: always
+    depends_on:
+      - logvinenko-vi-prometheus
+    networks:
+      - logvinenko-vi-my-netology-hw
+    # expose:
+      # - 9091
+    ports:
+      - "9091:9091"
+    
+  logvinenko-vi-grafana:
+    image: grafana/grafana:main-ubuntu
+    restart: always
+    volumes:
+      - ./grafana/:/etc/grafana/provisioning/
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+      - GF_PATHS_CONFIG=/etc/grafana/provisioning/custom.ini
+    networks:
+      - logvinenko-vi-my-netology-hw
+    ports:
+      - "80:3000"

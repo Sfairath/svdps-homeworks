@@ -1,0 +1,18 @@
+version: "3.8"
+volumes:
+    prometheus_data: {}
+
+networks:
+  logvinenko-vi-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+services:
+  prometheus:
+    image: prom/prometheus:v3.5.1
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus/
+    networks:
+      - logvinenko-vi-my-netology-hw
