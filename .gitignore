@@ -1,0 +1,61 @@
+# Основные игноры
+__pycache__/
+*.retry
+*.retry.json
+.DS_Store
+*.log
+.venv/
+venv/
+.vscode/
+.idea/
+.vagrant/
+Vagrantfile
+Vagrantfile.*
+!.vagrant.d/
+boxes/
+*.box
+.vagrant.d/
+.vagrant/machines/
+
+# Инвентори - игнорируем все, кроме примеров
+inventory/hosts
+inventory/production/hosts
+inventory/staging/hosts
+inventory/development/hosts
+!inventory/*/hosts.example
+!inventory/hosts.example
+
+# Vault и секреты - ВАЖНО!
+*.vault
+*.vault.yml
+vault-password
+.vault-password
+vault-password.txt
+.vault-password.txt
+!*.vault.example.yml
+!vault-password.example
+
+# SSH ключи и сертификаты
+*.key
+*.pem
+*.crt
+*.csr
+ssh-keys/
+keys/
+.ssh/
+
+# Переменные с паролями (чтобы случайно не закоммитить)
+group_vars/all/vault.yml
+group_vars/production/vault.yml
+host_vars/*/vault.yml
+!group_vars/*/vault.example.yml
+
+# Ansible Galaxy
+galaxy_roles/
+ansible-galaxy-requirements.yml.lock
+
+# Временные файлы
+*.tmp
+*.bak
+*~
+*.swp

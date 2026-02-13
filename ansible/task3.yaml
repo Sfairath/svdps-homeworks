@@ -1,0 +1,22 @@
+- name: Change MOTD
+  hosts: vagrant1
+
+  tasks:
+    - name: Create MOTD
+      ansible.builtin.copy:
+        content: |
+          ================================================
+          Добро пожаловать на сервер {{ ansible_hostname }}
+          ip-adress: {{ ansible_enp0s8.ipv4.address }}
+          ================================================
+
+          Управляемый Ansible
+          Дата развертывания: {{ ansible_date_time.iso8601 }}
+
+          Внимание: Доступ разрешен только авторизованным пользователям
+          ================================================
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: '0644'
+      become: true

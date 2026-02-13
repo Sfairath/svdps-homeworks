@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ ansible_hostname }} - система</title>
+</head>
+<body>
+    <h1>Сервер: {{ ansible_hostname }}</h1>
+    
+    <h2>Процессор</h2>
+    <p>Модель: {{ ansible_processor[2] }}</p>
+    
+    <h2>Оперативная память</h2>
+    <p>Объем: {{ ansible_memtotal_mb }} MB</p>
+    
+    <h2>Жесткие диски</h2>
+    <ul>
+    {% for disk in apache_all_disks %}
+        <li>{{ disk.name }}: {{ disk.size }}</li>
+    {% endfor %}
+    </ul>
+    
+    <h2>IP адреса</h2>
+    <ul>
+    {% for ip in ansible_all_ipv4_addresses %}
+        <li>{{ ip }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

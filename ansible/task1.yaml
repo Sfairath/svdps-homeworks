@@ -1,0 +1,36 @@
+---
+- name: Task 1
+  hosts: vagrant1
+
+  tasks:
+    - name: Create temp directory
+      ansible.builtin.file:
+        path: /tmp/kafka
+        state: directory
+        mode: '0755'
+
+    - name: Create unarchived directory
+      ansible.builtin.file:
+        path: /tmp/kafka/unarchived
+        state: directory
+        mode: '0755'
+
+    - name: Download kafka
+      ansible.builtin.get_url:
+        url: https://dlcdn.apache.org/kafka/4.1.1/kafka-4.1.1-src.tgz
+        dest: /tmp/kafka/kafka-4.1.1-src.tgz
+        mode: '0644'
+
+    - name: Unarchive
+      ansible.builtin.unarchive:
+        src: /tmp/kafka/kafka-4.1.1-src.tgz
+        dest: /tmp/kafka/unarchived
+        remote_src: true
+        extra_opts:
+          - --strip-components=1
+        mode: '0755'
+
+    - name: Удалить скачанный архив
+      ansible.builtin.file:
+        path: ./kafka/kafka-4.1.1-src.tgz
+        state: absent

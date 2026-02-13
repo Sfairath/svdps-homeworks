@@ -1,0 +1,17 @@
+- name: Task 2
+  hosts: vagrant1
+  become: true
+
+  tasks:
+    - name: Install tuned
+      ansible.builtin.package:
+        name: tuned
+        state: present
+        update_cache: true
+
+    - name: Launch and autoload
+      ansible.builtin.systemd:
+        name: tuned.service
+        state: started
+        enabled: true
+        daemon_reload: true

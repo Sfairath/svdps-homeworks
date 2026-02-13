@@ -1,0 +1,62 @@
+---
+# tasks file for apache
+- name: Install apache
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: true
+
+- name: Launch and autoload apache
+  ansible.builtin.systemd:
+    name: apache2.service
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: Initialize empty list
+  ansible.builtin.set_fact:
+    apache_all_disks: []
+
+- name: Get all disks information
+  ansible.builtin.set_fact:
+    apache_all_disks: "{{ apache_all_disks + [{'name': item.key, 'size': item.value.size}] }}"
+  loop: "{{ ansible_devices | dict2items | selectattr('value.size', 'defined') | list }}"
+  when: not item.key.startswith(('loop', 'ram', 'sr'))
+
+- name: Get all disks information
+  ansible.builtin.set_fact:
+    apache_ram_size: "{{ (ansible_memtotal_mb | string) + ' MB' }}"
+
+- name: Get IP
+  ansible.builtin.set_fact:
+    apache_ip_v4: "{{ ansible_all_ipv4_addresses }}"
+
+- name: Get cpu info
+  ansible.builtin.set_fact:
+    apache_cpu_info: "{{ 'CPU model ' + ansible_processor[2] }}"
+
+- name: Create custom index.html from template
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  notify: Restart apache
+
+- name: Check server status
+  ansible.builtin.uri:
+    url: "http://{{ ansible_all_ipv4_addresses[1] }}"
+    method: GET
+    status_code: 200  # ожидаемый код ответа
+  register: result
+
+- name: Show result
+  ansible.builtin.debug:
+    msg: "Сайт доступен! Время ответа: {{ result.elapsed }} секунд"
+
+- name: Restart on config change
+  ansible.builtin.template:
+    src: apache2.conf.j2
+    dest: /etc/apache2/apache2.conf
+  notify: Restart apache
