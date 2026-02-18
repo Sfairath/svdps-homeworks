@@ -1,0 +1,50 @@
+- name: Task 3 #Плейбук для установки БД
+  hosts: dbserver
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Install DB
+      ansible.builtin.apt:
+        name:
+          - mysql-server
+          - python3-mysqldb #Для общения MySQL и Ansible
+        state: present
+        update_cache: true
+
+    - name: Launch and enable mysql
+      ansible.builtin.systemd:
+        name: mysql
+        state: started
+        enabled: yes
+        daemon_reload: true
+
+    - name: Set root password and secure installation
+      become: yes
+      ignore_errors: yes
+      block:
+        # - name: Change root password
+        #   community.mysql.mysql_user:
+        #     login_user: root
+        #     login_password: ''          # По умолчанию после установки пароль пустой
+        #     name: root
+        #     password: "{{ mysql_root_password }}"
+        #     host: localhost
+        #     check_implicit_admin: yes
+        #   when: mysql_root_password is defined
+
+        - name: Remove anonymous users
+          community.mysql.mysql_user:
+            login_user: root
+            login_password: ''
+            name: ''
+            host_all: yes
+            state: absent
+
+        - name: Remove test database
+          community.mysql.mysql_db:
+            login_user: root
+            login_password: ''
+            name: test
+            state: absent
+    

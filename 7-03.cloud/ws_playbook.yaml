@@ -1,0 +1,21 @@
+- name: Task 2
+  hosts: webservers
+  gather_facts: false
+  become: true
+
+  vars:
+    ansible_ssh_user: user
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Start and enable
+      ansible.builtin.systemd:
+        name: nginx.service
+        state: started
+        enabled: true
+        daemon_reload: true
