@@ -16,6 +16,8 @@ boxes/
 *.box
 .vagrant.d/
 .vagrant/machines/
+.terraform/
+gitlab/
 
 # Инвентори - игнорируем все, кроме примеров
 inventory/hosts
@@ -59,3 +61,10 @@ ansible-galaxy-requirements.yml.lock
 *.bak
 *~
 *.swp
+
+# Убираем чувствительные данные terraform
+cloud-init.yaml
+*.tfstate
+*.backup
+authorized_key.json
+.terraform.lock.hcl
